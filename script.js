@@ -6,7 +6,9 @@ const CONFIG = {
         2: { name: 'High', class: 'priority-2' },
         3: { name: 'Medium', class: 'priority-3' },
         4: { name: 'Low', class: 'priority-4' }
-    }
+    },
+    // Adiciona a URL do TestRail para uso no front-end
+    TESTRAIL_URL: 'https://fugroroadware.testrail.com'
 };
 
 // Utility functions
@@ -41,14 +43,20 @@ function formatDate(timestamp) {
 
 function formatContent(content) {
     if (!content) return '<div class="empty-content">Not specified</div>';
-    
-    // Convert basic HTML to styled content
+
+    // Corrigir imagens do TestRail: transformar URLs relativos em absolutos
     let formatted = content
         .replace(/\n/g, '<br>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>');
-    
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        // Corrige imagens Markdown com caminho relativo do TestRail (qualquer caminho que comece com index.php?/attachments/get/)
+        .replace(/!\[([^\]]*)\]\((index\.php\?\/attachments\/get\/[^)]+)\)/gi, function(match, alt, relUrl) {
+            const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.TESTRAIL_URL) ? CONFIG.TESTRAIL_URL : 'https://fugroroadware.testrail.com';
+            // Remove barras duplas acidentais
+            relUrl = relUrl.replace(/^\/+/, '');
+            return `<img src="${baseUrl}/${relUrl}" alt="${alt}" class="testrail-img img-fluid" style="max-width:100%;height:auto;" />`;
+        });
     return formatted;
 }
 
@@ -120,10 +128,16 @@ function formatCustomFields(testCase) {
     };
     
     Object.keys(testCase).forEach(key => {
-        if (key.startsWith('custom_') && testCase[key] !== null && testCase[key] !== '') {
+        if (
+            key.startsWith('custom_') &&
+            testCase[key] !== null &&
+            testCase[key] !== '' &&
+            key !== 'custom_preconds' &&
+            key !== 'custom_steps' &&
+            key !== 'custom_expected'
+        ) {
             const label = knownCustomFields[key] || key.replace('custom_', '').replace(/_/g, ' ');
             const value = testCase[key];
-            
             html += `
                 <div class="custom-field">
                     <div class="custom-field-label">${label}</div>

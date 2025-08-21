@@ -138,10 +138,17 @@ Configure priorities in `CONFIG.PRIORITIES` according to your TestRail configura
 1. Commit the files to the repository
 2. Go to **Settings** → **Pages**
 3. Select **Deploy from a branch**
-4. Choose **main** and **/ (root)**
+4. Choose **main** and **/docs**
 5. Click **Save**
 
 Your site will be available at: `https://your-username.github.io/repo-name/`
+
+### Demo
+
+You can view a demo of the TestRail Case Viewer at:
+`https://janainarocha.github.io/testrailviewer/`
+
+This demo shows how a test case would be displayed without requiring TestRail API access.
 
 ### Other options
 
