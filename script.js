@@ -7,8 +7,7 @@ const CONFIG = {
         3: { name: 'Medium', class: 'priority-3' },
         4: { name: 'Low', class: 'priority-4' }
     },
-    // Adiciona a URL do TestRail para uso no front-end
-    TESTRAIL_URL: 'https://fugroroadware.testrail.com'
+    TESTRAIL_URL: process.env.TESTRAIL_URL  
 };
 
 // Utility functions
@@ -44,16 +43,13 @@ function formatDate(timestamp) {
 function formatContent(content) {
     if (!content) return '<div class="empty-content">Not specified</div>';
 
-    // Corrigir imagens do TestRail: transformar URLs relativos em absolutos
     let formatted = content
         .replace(/\n/g, '<br>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
         .replace(/`(.*?)`/g, '<code>$1</code>')
-        // Corrige imagens Markdown com caminho relativo do TestRail (qualquer caminho que comece com index.php?/attachments/get/)
         .replace(/!\[([^\]]*)\]\((index\.php\?\/attachments\/get\/[^)]+)\)/gi, function(match, alt, relUrl) {
-            const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.TESTRAIL_URL) ? CONFIG.TESTRAIL_URL : 'https://fugroroadware.testrail.com';
-            // Remove barras duplas acidentais
+            const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.TESTRAIL_URL) ? CONFIG.TESTRAIL_URL : 'https://your-company.testrail.com';
             relUrl = relUrl.replace(/^\/+/, '');
             return `<img src="${baseUrl}/${relUrl}" alt="${alt}" class="testrail-img img-fluid" style="max-width:100%;height:auto;" />`;
         });

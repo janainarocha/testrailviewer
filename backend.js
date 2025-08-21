@@ -11,7 +11,7 @@ const PORT = 3000;
 
 app.get('/api/case/:id', async (req, res) => {
     const caseId = req.params.id;
-    const TESTRAIL_URL = 'https://fugroroadware.testrail.com';
+    const TESTRAIL_URL = process.env.TESTRAIL_URL || 'https://your-company.testrail.com';
     const API_USER = process.env.TESTRAIL_API_USER;
     const API_KEY = process.env.TESTRAIL_API_KEY;
 
