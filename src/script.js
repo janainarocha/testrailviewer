@@ -1,13 +1,13 @@
 // Configuration
 const CONFIG = {
-    // Priority settings (adapt according to your TestRail configuration)
+    // Priority settings from Fugro Roadware TestRail configuration
     PRIORITIES: {
-        1: { name: 'Critical', class: 'priority-1' },
-        2: { name: 'High', class: 'priority-2' },
-        3: { name: 'Medium', class: 'priority-3' },
-        4: { name: 'Low', class: 'priority-4' }
+        6: { name: '3 - Must Test - Code has changed', class: 'priority-6 bg-danger text-white' },
+        3: { name: '2 - Test If Time', class: 'priority-3 bg-warning text-dark' },
+        5: { name: '1 - Must Test', class: 'priority-5 bg-success text-white' }
     },
-    TESTRAIL_URL: process.env.TESTRAIL_URL  
+    // TestRail URL (will be configured automatically)
+    TESTRAIL_URL: 'https://fugroroadware.testrail.com'
 };
 
 // Utility functions
@@ -153,8 +153,39 @@ function formatCustomFields(testCase) {
 }
 
 async function callTestRailAPI(endpoint) {
-    // Call the backend instead of TestRail directly
-    const url = `http://localhost:3000/api/case/${endpoint.replace('get_case/', '')}`;
+    // Detect environment: localhost vs AWS vs others
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    const isAWS = hostname.includes('amazonaws.com') || 
+                  hostname.includes('cloudfront.net') ||
+                  hostname.includes('amplifyapp.com');
+    
+    const caseId = endpoint.replace('get_case/', '');
+    
+    let url;
+    if (isLocalhost) {
+        // Local development: use Node.js backend
+        url = `http://localhost:3000/api/case/${caseId}`;
+    } else if (isAWS) {
+        // AWS Amplify: use demo data (no backend configured)
+        console.log('Using demo data for case:', caseId);
+        
+        // Simulate API call with demo data
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const demoCase = window.DEMO_DATA && window.DEMO_DATA[caseId];
+                if (demoCase) {
+                    resolve(demoCase);
+                } else {
+                    reject(new Error(`Demo case ${caseId} not found. Available: ${Object.keys(window.DEMO_DATA || {}).join(', ')}`));
+                }
+            }, 500); // Simulate network delay
+        });
+    } else {
+        // Others (Netlify, etc): use serverless function
+        url = `/api/case/${caseId}`;
+    }
+    
     try {
         const response = await fetch(url);
         if (!response.ok) {

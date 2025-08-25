@@ -10,7 +10,9 @@
   "description": "A simple web viewer for TestRail test cases, created to allow people without direct access to TestRail to view specific test cases.",
   "main": "backend.js",
   "scripts": {
-    "start": "node backend.js"
+    "start": "node backend.js",
+    "dev": "nodemon backend.js",
+    "test": "echo 'Visit http://localhost:3000/?case=373696 to test'"
   },
   "keywords": [],
   "author": "",

@@ -1,253 +1,111 @@
-# TestRail Case Viewer
+# 🚀 TestRail Case Viewer
 
-A simple web viewer for TestRail test cases, created to allow people without direct access to TestRail to view specific test cases.
+A simple, responsive web viewer for TestRail test cases. Perfect for sharing specific test cases with stakeholders who don't have direct TestRail access.
 
-## 🚀 Features
+## ✨ Features
 
-- **Complete visualization** of TestRail test cases
-- **Responsive interface** and user-friendly
-- **Access without login** to TestRail (using generic user API Key)
-- **Rich content formatting** (HTML, basic Markdown)
-- **Custom fields support**
-- **Direct links** to specific cases
-- **Print functionality**
+- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
+- 🎨 **Clean Interface** - Bootstrap-based UI with TestRail styling
+- 🖼️ **Image Support** - Properly displays TestRail attachments
+- 🔗 **Direct Links** - Share cases via URL: `?case=123456`
+- ⚡ **Fast Loading** - Optimized for quick case display
 
-## 📋 Prerequisites
+## 🌐 Live Demo
 
-1. **TestRail access** with API permissions
-2. **Generic user** in TestRail with access to desired projects
-3. **API Key** generated for the generic user
-4. **GitHub Pages** enabled in repository (optional, for hosting)
+**Production:** `https://main.amplifyapp.com/?case=373696`
 
-## ⚙️ Configuration
-
-### 1. Configure API credentials
-
-Edit the `script.js` file and update the configurations in the `CONFIG` object:
-
-```javascript
-const CONFIG = {
-    // Your TestRail instance URL
-    TESTRAIL_URL: 'https://your-company.testrail.com',
-    
-    // Generic user credentials
-    API_USER: 'generic.user@your-company.com',
-    API_KEY: 'YOUR_API_KEY_HERE',
-    
-    // Priority configurations (adapt according to your configuration)
-    PRIORITIES: {
-        1: { name: 'Critical', class: 'priority-1' },
-        2: { name: 'High', class: 'priority-2' },
-        3: { name: 'Medium', class: 'priority-3' },
-        4: { name: 'Low', class: 'priority-4' }
-    }
-};
-```
-
-### 2. Get TestRail API Key
-
-1. Login to TestRail with the generic user
-2. Go to **Administration** → **Settings** → **API Keys**
-3. Click **Add Key**
-4. Copy the generated key
-
-### 3. Configure CORS (if necessary)
-
-Depending on your TestRail configuration, it may be necessary to configure CORS to allow browser requests. Contact your TestRail administrator.
-
-## 🔗 How to use
-
-### Direct URL
-
-Access the viewer with the test case ID:
+## 📁 Project Structure
 
 ```
-https://your-username.github.io/repo-name/?case=373696
+testrailviewer/
+├── src/                    # 🎯 Main application files
+│   ├── index.html         # Main viewer interface  
+│   ├── script.js          # JavaScript functionality
+│   └── style.css          # Styling and responsive design
+├── local-dev/             # 💻 Local development files
+│   ├── backend.js         # Local Express server
+│   ├── package.json       # Node.js dependencies
+│   └── .env              # Local environment variables
+├── docs-backup/           # 📄 Demo and documentation
+└── amplify.yml           # ⚙️ AWS Amplify configuration
 ```
 
-### Integration with Jira
+## 🚀 Deploy with AWS Amplify
 
-In Jira, you can create links that point to specific cases:
+### Quick Deploy:
+1. **Fork this repository**
+2. **Connect to Amplify:** https://console.aws.amazon.com/amplify/
+3. **Select GitHub** as source
+4. **Choose your fork** of this repository
+5. **Deploy automatically!**
 
-1. **In issue descriptions**: 
-   ```
-   Test case: [C373696](https://your-username.github.io/repo-name/?case=373696)
-   ```
-
-2. **As custom field**: Configure a URL field in Jira that points to the viewer
-
-3. **In comments**: Paste the direct link to the case
-
-### URL Examples
-
-- Specific case: `?case=373696`
-- Case with alternative ID: `?id=373696`
-
-## 📱 Features
-
-### Case Visualization
-
-- **Title and ID** of the case
-- **Priority and type** with colors
-- **Creation information** and updates
-- **Formatted preconditions**
-- **Numbered and structured test steps**
-- **Expected results**
-- **Custom fields** from your TestRail
-
-### Interface
-
-- **Responsive design** works on desktop and mobile
-- **Optimized printing** for documentation
-- **Loading states** for better UX
-- **Error handling** with clear messages
-- **Direct link** to original TestRail
-
-## 🔧 Customization
-
-### Custom Fields
-
-Edit the `knownCustomFields` list in `script.js` to include your custom fields:
-
-```javascript
-const knownCustomFields = {
-    'custom_automation_type': 'Automation Type',
-    'custom_test_data': 'Test Data',
-    'custom_environment': 'Environment',
-    // Add your fields here...
-};
+### Configuration:
+Add these environment variables in Amplify Console:
+```
+TESTRAIL_URL=https://your-company.testrail.com
+TESTRAIL_API_USER=your.user@company.com
+TESTRAIL_API_KEY=your-api-key
 ```
 
-### Styles
+## 💻 Local Development
 
-Modify `style.css` to customize:
+For local development with TestRail API:
 
-- Company **colors**
-- **Fonts** and sizes
-- **Layout** and spacing
-- **Priorities** with specific colors
-
-### Priorities
-
-Configure priorities in `CONFIG.PRIORITIES` according to your TestRail configuration.
-
-## 🚀 Deploy
-
-### GitHub Pages
-
-1. Commit the files to the repository
-2. Go to **Settings** → **Pages**
-3. Select **Deploy from a branch**
-4. Choose **main** and **/docs**
-5. Click **Save**
-
-Your site will be available at: `https://your-username.github.io/repo-name/`
-
-### Demo
-
-You can view a demo of the TestRail Case Viewer at:
-`https://janainarocha.github.io/testrailviewer/`
-
-This demo shows how a test case would be displayed without requiring TestRail API access.
-
-### Other options
-
-- **Netlify**: Connect the GitHub repository
-- **Vercel**: Deploy directly from GitHub
-- **Own server**: Upload the HTML/CSS/JS files
-
-## 🔒 Security
-
-### ⚠️ IMPORTANT
-
-**DO NOT commit credentials** directly in the code for public repositories!
-
-### Safer options:
-
-1. **Private repository**: Keep the repo private if it contains credentials
-2. **Environment variables**: Use GitHub Secrets + GitHub Actions
-3. **Backend proxy**: Create an intermediate API that doesn't expose credentials
-4. **Netlify Functions**: Use serverless functions for API calls
-
-### Example with GitHub Actions
-
-Create `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [ main ]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Replace credentials
-      run: |
-        sed -i "s/YOUR_API_KEY_HERE/${{ secrets.TESTRAIL_API_KEY }}/g" script.js
-        sed -i "s/generic.user@your-company.com/${{ secrets.TESTRAIL_USER }}/g" script.js
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
+```bash
+cd local-dev/
+npm install
+npm start
+# Visit: http://localhost:3000/?case=123456
 ```
 
-## 🐛 Troubleshooting
+## 🎯 Usage
 
-### CORS Error
-
+### Direct Case Access:
 ```
-Connection error. Please check if TestRail is accessible and CORS is configured.
-```
-
-**Solution**: Configure CORS in TestRail or use a backend proxy.
-
-### Error 401 - Unauthorized
-
-```
-Authentication error. Please check API credentials.
+https://your-amplify-url.com/?case=373696
 ```
 
-**Solution**: Check if the API Key and email are correct.
+### Supported Parameters:
+- `case=ID` - TestRail case ID to display
 
-### Error 403 - Access denied
+## 📱 Responsive Design
 
-```
-Access denied. Please check user permissions.
-```
+- **Desktop:** Full layout with sidebar navigation
+- **Tablet:** Collapsed navigation, optimized spacing  
+- **Mobile:** Stack layout, touch-friendly interface
 
-**Solution**: Make sure the generic user has permission to view test cases.
+## 🔧 Technical Stack
 
-### Case not found
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+- **Styling:** Bootstrap 5.1.3
+- **Hosting:** AWS Amplify
+- **API:** TestRail REST API v2
 
-```
-Test case not found.
-```
+## 📋 Browser Support
 
-**Solution**: Check if the ID is correct and if the case exists in TestRail.
-
-## 📄 License
-
-This project is open source. Feel free to modify and distribute as needed.
+- ✅ Chrome 90+
+- ✅ Firefox 88+  
+- ✅ Safari 14+
+- ✅ Edge 90+
 
 ## 🤝 Contributing
 
-1. Fork the project
-2. Create a branch for your feature (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test locally
+5. Submit a pull request
 
-## 📞 Support
+## 📄 License
 
-For questions or issues:
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
 
-1. Check the **Troubleshooting** section
-2. Consult the [TestRail API documentation](http://docs.gurock.com/testrail-api2/start)
-3. Open an issue on GitHub
+## 🆘 Support
+
+For issues or questions:
+- 📧 Open an issue in this repository
+- 📖 Check the documentation in `/docs-backup/`
 
 ---
 
-**Developed to facilitate access to TestRail test cases** 🧪
+**Made with ❤️ for better TestRail case sharing**

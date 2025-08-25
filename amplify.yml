@@ -1,0 +1,10 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - echo "Building static frontend for Amplify"
+  artifacts:
+    baseDirectory: src
+    files:
+      - '**/*'
