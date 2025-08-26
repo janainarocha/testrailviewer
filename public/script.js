@@ -494,29 +494,10 @@ function displayReportResults(result, reportName) {
     }
 }
 
-function hideReportResults() {
-    const resultsSection = document.getElementById('report-results');
-    if (resultsSection) {
-        resultsSection.classList.add('d-none');
-    }
-}
 
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
-
-// Export for testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        CONFIG,
-        loadTestCase,
-        formatContent,
-        formatSteps,
-        formatDate,
-        loadReports,
-        runReport
-    };
 }
