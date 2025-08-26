@@ -1,111 +1,123 @@
-# 🚀 TestRail Case Viewer
+# TestRail Viewer
 
-A simple, responsive web viewer for TestRail test cases. Perfect for sharing specific test cases with stakeholders who don't have direct TestRail access.
+A lightweight web application for viewing TestRail test cases and reports with integrated PDF viewing capabilities.
 
-## ✨ Features
+## Features
 
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
-- 🎨 **Clean Interface** - Bootstrap-based UI with TestRail styling
-- 🖼️ **Image Support** - Properly displays TestRail attachments
-- 🔗 **Direct Links** - Share cases via URL: `?case=123456`
-- ⚡ **Fast Loading** - Optimized for quick case display
+- **Test Case Viewing**: Display detailed TestRail test cases with formatted content
+- **Report Generation**: Access and run TestRail reports 
+- **PDF Integration**: View PDF reports directly in the browser using multiple fallback methods
+- **Responsive Design**: Bootstrap-based UI that works on desktop and mobile
+- **Docker Ready**: Containerized for easy deployment on EC2 or any Docker environment
 
-## 🌐 Live Demo
-
-**Production:** `https://main.amplifyapp.com/?case=373696`
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 testrailviewer/
-├── src/                    # 🎯 Main application files
-│   ├── index.html         # Main viewer interface  
-│   ├── script.js          # JavaScript functionality
-│   └── style.css          # Styling and responsive design
-├── local-dev/             # 💻 Local development files
-│   ├── backend.js         # Local Express server
-│   ├── package.json       # Node.js dependencies
-│   └── .env              # Local environment variables
-├── docs-backup/           # 📄 Demo and documentation
-└── amplify.yml           # ⚙️ AWS Amplify configuration
+├── server.js              # Express.js backend server (main entry point)
+├── package.json           # Node.js dependencies and scripts
+├── Dockerfile             # Docker container configuration
+├── docker-compose.yml     # Docker Compose for development
+├── deploy.sh              # EC2 deployment script
+├── .env.example           # Environment variables template
+├── .dockerignore          # Docker ignore rules
+└── public/                # Static frontend files
+    ├── index.html         # Main HTML page
+    ├── script.js          # JavaScript functionality
+    └── style.css          # CSS styling
 ```
 
-## 🚀 Deploy with AWS Amplify
 
-### Quick Deploy:
-1. **Fork this repository**
-2. **Connect to Amplify:** https://console.aws.amazon.com/amplify/
-3. **Select GitHub** as source
-4. **Choose your fork** of this repository
-5. **Deploy automatically!**
+1. **Entry Point**: Node.js looks for the main file in the root directory
+2. **package.json**: Defines `"main": "server.js"` or `"start": "node server.js"`
+3. **Docker**: The Dockerfile copies `server.js` from the root
+4. **Simplicity**: For smaller projects, there's no need for subfolders
 
-### Configuration:
-Add these environment variables in Amplify Console:
-```
-TESTRAIL_URL=https://your-company.testrail.com
-TESTRAIL_API_USER=your.user@company.com
-TESTRAIL_API_KEY=your-api-key
-```
+## Quick Start
 
-## 💻 Local Development
+### 1. Environment Setup
 
-For local development with TestRail API:
+Copy the environment template and configure your TestRail credentials:
 
 ```bash
-cd local-dev/
+cp .env.example .env
+```
+
+Edit `.env` with your TestRail settings:
+
+```env
+TESTRAIL_URL=https://your-company.testrail.com
+TESTRAIL_API_USER=your-email@company.com
+TESTRAIL_API_KEY=your-api-key
+NODE_ENV=production
+```
+
+### 2. Docker Deployment (Recommended)
+
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Or build manually
+docker build -t testrailviewer .
+docker run -d -p 3000:3000 --env-file .env testrailviewer
+```
+
+### 3. Local Development
+
+```bash
+# Install dependencies
 npm install
+
+# Start development server
 npm start
-# Visit: http://localhost:3000/?case=123456
 ```
 
-## 🎯 Usage
+Visit `http://localhost:3000` to access the application.
 
-### Direct Case Access:
-```
-https://your-amplify-url.com/?case=373696
-```
+## API Endpoints
 
-### Supported Parameters:
-- `case=ID` - TestRail case ID to display
+- `GET /api/case/:id` - Retrieve a specific test case
+- `GET /api/reports/:projectId` - Get available reports for a project
+- `GET /api/report/run/:reportId` - Execute a specific report
+- `GET /api/pdf-proxy` - Proxy PDF files with authentication
+- `GET /health` - Health check endpoint
 
-## 📱 Responsive Design
+## EC2 Deployment
 
-- **Desktop:** Full layout with sidebar navigation
-- **Tablet:** Collapsed navigation, optimized spacing  
-- **Mobile:** Stack layout, touch-friendly interface
+1. Update `deploy.sh` with your EC2 details:
+   - SSH key path
+   - EC2 instance IP
+   - Any custom configuration
 
-## 🔧 Technical Stack
+2. Run deployment:
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
 
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Styling:** Bootstrap 5.1.3
-- **Hosting:** AWS Amplify
-- **API:** TestRail REST API v2
+## Technology Stack
 
-## 📋 Browser Support
+- **Backend**: Node.js, Express.js
+- **Frontend**: Vanilla JavaScript, Bootstrap 5, Font Awesome
+- **Containerization**: Docker, Docker Compose
+- **Deployment**: EC2, Docker
 
-- ✅ Chrome 90+
-- ✅ Firefox 88+  
-- ✅ Safari 14+
-- ✅ Edge 90+
+## Security Features
 
-## 🤝 Contributing
+- Environment-based configuration
+- CORS protection
+- Non-root Docker user
+- Input validation
+- Secure TestRail API authentication
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test locally
-5. Submit a pull request
+## Health Monitoring
 
-## 📄 License
+The application includes built-in health checks:
+- Docker healthcheck endpoint at `/health`
+- Monitoring for service availability
+- Automatic restart policies in Docker Compose
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+## License
 
-## 🆘 Support
-
-For issues or questions:
-- 📧 Open an issue in this repository
-- 📖 Check the documentation in `/docs-backup/`
-
----
-
-**Made with ❤️ for better TestRail case sharing**
+MIT License - see LICENSE file for details.

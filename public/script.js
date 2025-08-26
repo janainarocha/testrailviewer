@@ -43,15 +43,17 @@ function formatDate(timestamp) {
 function formatContent(content) {
     if (!content) return '<div class="empty-content">Not specified</div>';
 
+    // Replace TestRail image markdown with clickable link
     let formatted = content
         .replace(/\n/g, '<br>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
         .replace(/`(.*?)`/g, '<code>$1</code>')
         .replace(/!\[([^\]]*)\]\((index\.php\?\/attachments\/get\/[^)]+)\)/gi, function(match, alt, relUrl) {
-            const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.TESTRAIL_URL) ? CONFIG.TESTRAIL_URL : 'https://your-company.testrail.com';
+            const baseUrl = 'https://fugroroadware.testrail.com';
             relUrl = relUrl.replace(/^\/+/, '');
-            return `<img src="${baseUrl}/${relUrl}" alt="${alt}" class="testrail-img img-fluid" style="max-width:100%;height:auto;" />`;
+            const fullUrl = `${baseUrl}/${relUrl}`;
+            return `<a href="${fullUrl}" target="_blank">${alt ? alt : 'View Image'}</a>`;
         });
     return formatted;
 }
@@ -130,10 +132,31 @@ function formatCustomFields(testCase) {
             testCase[key] !== '' &&
             key !== 'custom_preconds' &&
             key !== 'custom_steps' &&
-            key !== 'custom_expected'
+            key !== 'custom_expected' &&
+            key !== 'custom_steps_separated'
         ) {
-            const label = knownCustomFields[key] || key.replace('custom_', '').replace(/_/g, ' ');
-            const value = testCase[key];
+            let label = knownCustomFields[key] || key.replace('custom_', '').replace(/_/g, ' ');
+            let value = testCase[key];
+            // Special handling for Automation Type
+            if (key === 'custom_automation_type') {
+                if (value === 0 || value === '0') {
+                    value = 'Not Required';
+                } else if (value === 1 || value === '1') {
+                    value = 'To do';
+                } else if (value === 2 || value === '2') {
+                    value = 'Automated';
+                }
+            }
+            // Special handling for Case Change Redesign
+            if (key === 'custom_case_change_redesign') {
+                if (value === 1 || value === '1') {
+                    value = 'Yes - partially';
+                } else if (value === 2 || value === '2') {
+                    value = 'Yes - fully';
+                } else if (value === 3 || value === '3') {
+                    value = 'No';
+                }
+            }
             html += `
                 <div class="custom-field">
                     <div class="custom-field-label">${label}</div>
@@ -153,39 +176,18 @@ function formatCustomFields(testCase) {
 }
 
 async function callTestRailAPI(endpoint) {
-    // Detect environment: localhost vs AWS vs others
+    // Detect environment: localhost vs others
     const hostname = window.location.hostname;
     const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
-    const isAWS = hostname.includes('amazonaws.com') || 
-                  hostname.includes('cloudfront.net') ||
-                  hostname.includes('amplifyapp.com');
-    
     const caseId = endpoint.replace('get_case/', '');
-    
     let url;
     if (isLocalhost) {
         // Local development: use Node.js backend
         url = `http://localhost:3000/api/case/${caseId}`;
-    } else if (isAWS) {
-        // AWS Amplify: use demo data (no backend configured)
-        console.log('Using demo data for case:', caseId);
-        
-        // Simulate API call with demo data
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const demoCase = window.DEMO_DATA && window.DEMO_DATA[caseId];
-                if (demoCase) {
-                    resolve(demoCase);
-                } else {
-                    reject(new Error(`Demo case ${caseId} not found. Available: ${Object.keys(window.DEMO_DATA || {}).join(', ')}`));
-                }
-            }, 500); // Simulate network delay
-        });
     } else {
-        // Others (Netlify, etc): use serverless function
+        // Others: use relative path
         url = `/api/case/${caseId}`;
     }
-    
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -242,7 +244,15 @@ function populateTestCaseUI(testCase) {
     priorityElement.className = `badge fs-6 ${priority.class}`;
     
     // Type (you might need to get types from API first)
-    document.getElementById('case-type').textContent = testCase.type_id ? `Type ${testCase.type_id}` : 'N/A';
+    let typeText = 'N/A';
+    if (testCase.type_id) {
+        if (testCase.type_id === 2 || testCase.type_id === '2') {
+            typeText = 'Functionality';
+        } else {
+            typeText = `Type ${testCase.type_id}`;
+        }
+    }
+    document.getElementById('case-type').textContent = typeText;
     
     // Dates and creator
     document.getElementById('case-created-by').textContent = testCase.created_by ? `User ${testCase.created_by}` : 'N/A';
@@ -288,6 +298,216 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Reports functionality
+// Global variables
+let currentReports = [];
+
+function showReportsLoading() {
+    document.getElementById('reports-loading').classList.remove('d-none');
+    document.getElementById('reports-error').classList.add('d-none');
+    document.getElementById('reports-list').classList.add('d-none');
+    document.getElementById('report-results').classList.add('d-none');
+}
+
+function hideReportsLoading() {
+    document.getElementById('reports-loading').classList.add('d-none');
+}
+
+function showReportsError(message) {
+    hideReportsLoading();
+    document.getElementById('reports-error-message').textContent = message;
+    document.getElementById('reports-error').classList.remove('d-none');
+    document.getElementById('reports-list').classList.add('d-none');
+}
+
+function showReportsList() {
+    hideReportsLoading();
+    document.getElementById('reports-error').classList.add('d-none');
+    document.getElementById('reports-list').classList.remove('d-none');
+}
+
+// Auto-load project 19 reports when Reports tab is shown
+document.addEventListener('DOMContentLoaded', function() {
+    // Listen for tab changes
+    const reportsTab = document.getElementById('reports-tab');
+    if (reportsTab) {
+        reportsTab.addEventListener('shown.bs.tab', function () {
+            // Only auto-load if no reports are currently displayed
+            if (currentReports.length === 0) {
+                loadReports();
+            }
+        });
+    }
+});
+
+async function loadReports() {
+    const projectId = document.getElementById('project-id').value || '19';
+    
+    if (!projectId) {
+        showReportsError('Please enter a project ID');
+        return;
+    }
+    
+    if (!/^\d+$/.test(projectId)) {
+        showReportsError('Project ID must be a number');
+        return;
+    }
+    
+    showReportsLoading();
+    
+    try {
+        const response = await fetch(`/api/reports/${projectId}`);
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || `HTTP ${response.status}`);
+        }
+        
+        const reports = await response.json();
+        currentReports = reports;
+        displayReports(reports);
+        showReportsList();
+        
+    } catch (error) {
+        console.error('Error loading reports:', error);
+        showReportsError(error.message || 'Failed to load reports');
+    }
+}
+
+function displayReports(reports) {
+    const container = document.getElementById('reports-content');
+    
+    if (!reports || reports.length === 0) {
+        container.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No reports available for this project, or no reports are configured for API access.
+                <br><small class="mt-2 d-block">
+                    To make reports available via API, create a report in TestRail and check "On-demand via the API" option.
+                </small>
+            </div>
+        `;
+        return;
+    }
+    
+    const reportsHtml = reports.map(report => `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">${escapeHtml(report.name || 'Unnamed Report')}</h6>
+                        <p class="card-text text-muted small mb-2">
+                            <strong>ID:</strong> ${report.id}
+                            ${report.description ? `<br><strong>Description:</strong> ${escapeHtml(report.description)}` : ''}
+                        </p>
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            ${report.notify_user ? '<span class="badge bg-info">Email Notifications</span>' : ''}
+                            ${report.notify_attachment ? '<span class="badge bg-secondary">Email Attachments</span>' : ''}
+                            ${report.cases_limit ? `<span class="badge bg-light text-dark">Limit: ${report.cases_limit}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-primary btn-sm" onclick="runReport(${report.id}, '${escapeHtml(report.name)}')">
+                            <i class="fas fa-play me-1"></i>
+                            Run Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    container.innerHTML = reportsHtml;
+}
+
+async function runReport(reportId, reportName) {
+    showReportsLoading();
+    
+    try {
+        const response = await fetch(`/api/report/run/${reportId}`);
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || `HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        displayReportResults(result, reportName);
+        
+    } catch (error) {
+        console.error('Error running report:', error);
+        showReportsError(error.message || 'Failed to run report');
+    }
+}
+
+function displayReportResults(result, reportName) {
+    hideReportsLoading();
+    
+    // Update report title
+    const reportTitle = document.getElementById('report-title');
+    if (reportTitle) {
+        reportTitle.textContent = reportName;
+    }
+    
+    // Create buttons container
+    const reportContent = document.getElementById('report-content');
+    if (reportContent) {
+        let buttonsHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
+        
+        if (result.report_url) {
+            buttonsHtml += `<a href="${result.report_url}" target="_blank" class="btn btn-primary">
+                <i class="fas fa-external-link-alt me-1"></i> See on TestRail
+            </a>`;
+        }
+        
+        if (result.report_html) {
+            buttonsHtml += `<a href="${result.report_html}" target="_blank" class="btn btn-success">
+                <i class="fas fa-download me-1"></i> Download HTML
+            </a>`;
+        }
+        
+        if (result.report_pdf) {
+            buttonsHtml += `<a href="${result.report_pdf}" target="_blank" class="btn btn-danger">
+                <i class="fas fa-file-pdf me-1"></i> Download PDF
+            </a>`;
+        }
+        
+        buttonsHtml += '</div>';
+        
+        if (!result.report_url && !result.report_html && !result.report_pdf) {
+            buttonsHtml = '<div class="alert alert-warning">No report URLs available</div>';
+        }
+        
+        reportContent.innerHTML = buttonsHtml;
+    }
+    
+    // Show results
+    const reportResults = document.getElementById('report-results');
+    if (reportResults) {
+        reportResults.classList.remove('d-none');
+        
+        // Scroll to results
+        reportResults.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+function hideReportResults() {
+    const resultsSection = document.getElementById('report-results');
+    if (resultsSection) {
+        resultsSection.classList.add('d-none');
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -295,6 +515,8 @@ if (typeof module !== 'undefined' && module.exports) {
         loadTestCase,
         formatContent,
         formatSteps,
-        formatDate
+        formatDate,
+        loadReports,
+        runReport
     };
 }

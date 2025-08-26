@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  testrailviewer:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - TESTRAIL_URL=${TESTRAIL_URL}
+      - TESTRAIL_API_USER=${TESTRAIL_API_USER}
+      - TESTRAIL_API_KEY=${TESTRAIL_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - testrail-network
+
+networks:
+  testrail-network:
+    driver: bridge

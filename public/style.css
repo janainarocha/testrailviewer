@@ -189,3 +189,113 @@ body {
     right: 20px;
     z-index: 1050;
 }
+
+/* Reports specific styles */
+.nav-tabs .nav-link {
+    border-radius: 0.375rem 0.375rem 0 0;
+    border: 1px solid transparent;
+    color: #6c757d;
+}
+
+.nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+    isolation: isolate;
+}
+
+#reports-pane .card {
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+#reports-pane .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+/* Report results styling */
+#report-results {
+    margin-top: 1rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+#html-embed-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.html-container {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+#html-iframe {
+    border: none;
+    width: 100%;
+    min-height: 700px;
+    background-color: white;
+    border-radius: 0.375rem;
+}
+
+/* Better HTML loading state */
+.html-container::before {
+    content: "Loading report...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #6c757d;
+    font-style: italic;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.html-container iframe {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Update HTML embed section for consistency */
+#html-embed-section {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border-top: 1px solid #dee2e6;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
