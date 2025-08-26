@@ -14,17 +14,21 @@ A lightweight web application for viewing TestRail test cases and reports with i
 
 ```
 testrailviewer/
-├── server.js              # Express.js backend server (main entry point)
-├── package.json           # Node.js dependencies and scripts
-├── Dockerfile             # Docker container configuration
-├── docker-compose.yml     # Docker Compose for development
-├── deploy.sh              # EC2 deployment script
-├── .env.example           # Environment variables template
-├── .dockerignore          # Docker ignore rules
-└── public/                # Static frontend files
-    ├── index.html         # Main HTML page
-    ├── script.js          # JavaScript functionality
-    └── style.css          # CSS styling
+├── server.js                # Express.js backend server (main entry point)
+├── package.json             # Node.js dependencies and scripts
+├── Dockerfile               # Docker container configuration
+├── docker-compose.yml       # Docker Compose for development
+├── deploy.sh                # EC2 deployment script
+├── .env.example             # Environment variables template
+├── .dockerignore            # Docker ignore rules
+├── routes/                  # API route definitions (modular)
+│   └── api.js               # API endpoints (cases, reports)
+├── services/                # Service layer (TestRail integration)
+│   └── testrailService.js   # TestRail API logic
+└── public/                  # Static frontend files
+   ├── index.html           # Main HTML page
+   ├── script.js            # JavaScript functionality
+   └── style.css            # CSS styling
 ```
 
 
@@ -81,43 +85,34 @@ Visit `http://localhost:3000` to access the application.
 - `GET /api/reports/:projectId` - Get available reports for a project
 - `GET /api/report/run/:reportId` - Execute a specific report
 - `GET /api/pdf-proxy` - Proxy PDF files with authentication
-- `GET /health` - Health check endpoint
-
-## EC2 Deployment
-
-1. Update `deploy.sh` with your EC2 details:
-   - SSH key path
-   - EC2 instance IP
-   - Any custom configuration
-
-2. Run deployment:
-   ```bash
-   chmod +x deploy.sh
-   ./deploy.sh
-   ```
 
 ## Technology Stack
 
-- **Backend**: Node.js, Express.js
-- **Frontend**: Vanilla JavaScript, Bootstrap 5, Font Awesome
-- **Containerization**: Docker, Docker Compose
-- **Deployment**: EC2, Docker
+## Technology Stack
 
-## Security Features
+### Backend
+- Node.js
+- Express.js
+- Modular structure (routes/services)
+- Environment variables via dotenv
+- CORS enabled
+- Non-root Docker user
 
+### Frontend
+- Vanilla JavaScript
+- Bootstrap 5 (via CDN)
+- Font Awesome (via CDN)
+
+### Containerization & DevOps
+- Docker
+- Docker Compose
+- Integrated healthcheck (`/health`)
+- Automatic restart via Docker Compose
+
+### Security
 - Environment-based configuration
 - CORS protection
-- Non-root Docker user
-- Input validation
-- Secure TestRail API authentication
+- Non-root user in container
 
-## Health Monitoring
-
-The application includes built-in health checks:
-- Docker healthcheck endpoint at `/health`
-- Monitoring for service availability
-- Automatic restart policies in Docker Compose
-
-## License
-
-MIT License - see LICENSE file for details.
+### License
+- MIT License - see LICENSE file
