@@ -26,11 +26,17 @@ app.get('/', (req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Server error:', err);
+    res.status(500).json({ 
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 // 404 handler
 app.use('*', (req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT);
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

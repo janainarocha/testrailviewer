@@ -52,8 +52,52 @@ async function getReports(projectId) {
 }
 
 async function runReport(reportId) {
+    console.log(`Running report with ID: ${reportId}`);
     const { TESTRAIL_URL, credentials } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/run_report/${reportId}`;
+    console.log(`TestRail URL: ${url}`);
+    
+    const response = await fetchFn(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    
+    console.log(`Response status: ${response.status}`);
+    
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`TestRail API error: ${errorText}`);
+        throw new Error(errorText);
+    }
+    
+    const result = await response.json();
+    console.log('Report result:', result);
+    return result;
+}
+
+async function getSuites(projectId) {
+    const { TESTRAIL_URL, credentials } = getCredentials();
+    const url = `${TESTRAIL_URL}/index.php?/api/v2/get_suites/${projectId}`;
+    const response = await fetchFn(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+    }
+    return await response.json();
+}
+
+async function getCases(projectId, suiteId) {
+    const { TESTRAIL_URL, credentials } = getCredentials();
+    const url = `${TESTRAIL_URL}/index.php?/api/v2/get_cases/${projectId}&suite_id=${suiteId}`;
     const response = await fetchFn(url, {
         method: 'GET',
         headers: {
@@ -71,5 +115,7 @@ async function runReport(reportId) {
 module.exports = {
     getCase,
     getReports,
-    runReport
+    runReport,
+    getSuites,
+    getCases
 };

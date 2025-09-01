@@ -34,6 +34,12 @@
                                     Reports
                                 </button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="search-tab" data-bs-toggle="tab" data-bs-target="#search-pane" type="button" role="tab">
+                                    <i class="fas fa-search me-1"></i>
+                                    Search US
+                                </button>
+                            </li>
                         </ul>
 
                         <!-- Tab Content -->
@@ -161,24 +167,12 @@
                             <!-- Reports Tab -->
                             <div class="tab-pane fade" id="reports-pane" role="tabpanel">
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="project-id" class="form-label">Project ID:</label>
-                                        <input type="number" class="form-control" id="project-id" placeholder="Enter project ID" value="19">
-                                    </div>
-                                    <div class="col-md-6 d-flex align-items-end">
-                                        <button class="btn btn-primary" onclick="loadReports()">
-                                            <i class="fas fa-search me-2"></i>
-                                            Load Reports
-                                        </button>
+                                    <div class="col-12">
+                                        <h5>Available Reports</h5>
+                                        <p class="text-muted">Click on any report below to generate it:</p>
                                     </div>
                                 </div>
-
-                                <!-- Auto-load project 19 reports -->
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Project 19 reports are loaded by default. Change the project ID above to view reports from other projects.
-                                </div>
-
+                                
                                 <!-- Reports Loading -->
                                 <div id="reports-loading" class="text-center d-none">
                                     <div class="spinner-border text-primary" role="status">
@@ -194,9 +188,61 @@
                                 </div>
 
                                 <!-- Reports List -->
-                                <div id="reports-list" class="d-none">
-                                    <h5 class="mb-3">Available Reports</h5>
-                                    <div id="reports-content"></div>
+                                <div id="reports-list">
+                                    <div id="reports-content">
+                                        <!-- Fixed reports will be loaded automatically here -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="card-title">Ivision Automated Report</h6>
+                                                                <p class="card-text text-muted small mb-2">
+                                                                    <strong>Report ID:</strong> 3
+                                                                    <br><strong>Project:</strong> Ivision (ID: 19)
+                                                                </p>
+                                                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                                                    <span class="badge bg-primary">Ivision</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <button class="btn btn-primary btn-sm" onclick="runReport(3, 'Ivision Automated Report')">
+                                                                    <i class="fas fa-play me-1"></i>
+                                                                    Run Report
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="card-title">Fastlane Automated Report</h6>
+                                                                <p class="card-text text-muted small mb-2">
+                                                                    <strong>Report ID:</strong> 4
+                                                                    <br><strong>Project:</strong> Fastlane (ID: 21)
+                                                                </p>
+                                                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                                                    <span class="badge bg-info">Fastlane</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <button class="btn btn-primary btn-sm" onclick="runReport(4, 'Fastlane Automated Report')">
+                                                                    <i class="fas fa-play me-1"></i>
+                                                                    Run Report
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Report Results -->
@@ -215,6 +261,65 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Search US Tab -->
+                            <div class="tab-pane fade" id="search-pane" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h5>Search User Stories</h5>
+                                        <p class="text-muted">Select a project and search for User Stories:</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Project Selection -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Select Project:</label>
+                                        <div class="d-flex gap-2">
+                                            <button id="ivision-btn" class="btn btn-outline-primary" onclick="selectProject('ivision')">
+                                                <i class="fas fa-eye me-1"></i>
+                                                Ivision
+                                            </button>
+                                            <button id="fastlane-btn" class="btn btn-outline-success" onclick="selectProject('fastlane')">
+                                                <i class="fas fa-road me-1"></i>
+                                                Fastlane
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Search Input -->
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label for="search-input" class="form-label">User Story Reference:</label>
+                                        <input type="text" class="form-control" id="search-input" 
+                                               placeholder="Enter US reference (e.g., US12345)" disabled>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button id="search-btn" class="btn btn-primary" onclick="searchUserStory()" disabled>
+                                            <i class="fas fa-search me-2"></i>
+                                            Search
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Search Loading -->
+                                <div id="search-loading" class="text-center d-none">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2" id="search-status">Searching...</p>
+                                </div>
+
+                                <!-- Search Error -->
+                                <div id="search-error" class="alert alert-danger d-none" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="search-error-message"></span>
+                                </div>
+
+                                <!-- Search Results -->
+                                <div id="search-results"></div>
                             </div>
                         </div>
                     </div>
