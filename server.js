@@ -2,12 +2,12 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const config = require('./config');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
+const PORT = config.PORT;
 
 // Modular API routes
 const apiRoutes = require('./routes/api');
@@ -25,13 +25,8 @@ app.get('/', (req, res) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
-    console.error('Server error:', err);
-    res.status(500).json({ 
-        error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
+const errorHandler = require('./middlewares/errorHandler');
+app.use(errorHandler);
 // 404 handler
 app.use('*', (req, res) => {
     res.status(404).json({ error: 'Route not found' });

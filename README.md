@@ -21,21 +21,32 @@ testrailviewer/
 ├── deploy.sh                # EC2 deployment script
 ├── .env.example             # Environment variables template
 ├── .dockerignore            # Docker ignore rules
+├── config.js                # Centralized config with validation
 ├── routes/                  # API route definitions (modular)
 │   └── api.js               # API endpoints (cases, reports)
+├── controllers/             # Route controllers (business logic)
+│   └── reportController.js  # Report endpoints logic
+├── middlewares/             # Express middlewares (validation, error handling)
+│   └── validate.js          # Request validation helpers
 ├── services/                # Service layer (TestRail integration)
 │   └── testrailService.js   # TestRail API logic
 └── public/                  # Static frontend files
-   ├── index.html           # Main HTML page
-   ├── script.js            # JavaScript functionality
-   └── style.css            # CSS styling
+    ├── index.html           # Main HTML page
+    ├── style.css            # CSS styling
+    └── modules/             # ES6 modules (frontend logic)
+        ├── api.js           # API calls to backend
+        ├── state.js         # State/config management (no fixed data duplication)
+        ├── ui.js            # UI rendering helpers
+        ├── utils.js         # Utility functions
+        └── main.js          # Main entry point (orchestrates tabs)
 ```
 
-
-1. **Entry Point**: Node.js looks for the main file in the root directory
-2. **package.json**: Defines `"main": "server.js"` or `"start": "node server.js"`
-3. **Docker**: The Dockerfile copies `server.js` from the root
-4. **Simplicity**: For smaller projects, there's no need for subfolders
+- **Backend**: Modular Express.js with config validation, controllers, services, and middlewares
+- **Frontend**: ES6 modules, no duplicidade de dados fixos, integração total via API
+- **Config**: Validação automática de variáveis essenciais no startup
+- **Docker Ready**: Containerização para produção e desenvolvimento
+- **Segurança**: CORS, variáveis de ambiente, usuário não-root
+- **Documentação**: README profissional e atualizado
 
 ## Quick Start
 
@@ -81,12 +92,15 @@ Visit `http://localhost:3000` to access the application.
 
 ## API Endpoints
 
-- `GET /api/case/:id` - Retrieve a specific test case
-- `GET /api/reports/:projectId` - Get available reports for a project
-- `GET /api/report/run/:reportId` - Execute a specific report
-- `GET /api/pdf-proxy` - Proxy PDF files with authentication
+- `GET /api/case/:id` — Retrieve a specific test case by ID
+- `GET /api/fixed-reports` — Get all fixed reports (centralized, no duplicidade)
+- `GET /api/report/run/:reportId` — Execute a specific report and get results
+- `GET /api/suites/:projectId` — List all suites for a project
+- `GET /api/cases/:projectId/:suiteId` — List all cases for a suite in a project
+- `GET /api/pdf-proxy` — Proxy PDF files with authentication
+- `GET /health` — Healthcheck endpoint for container monitoring
 
-## Technology Stack
+**All endpoints validate required config variables at startup.**
 
 ## Technology Stack
 

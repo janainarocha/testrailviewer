@@ -1,4 +1,7 @@
 
+
+const config = require('../config');
+
 let fetchFn;
 if (typeof fetch === 'function') {
     fetchFn = fetch;
@@ -6,110 +9,59 @@ if (typeof fetch === 'function') {
     fetchFn = require('node-fetch');
 }
 
+async function apiGet(url) {
+    const { credentials } = getCredentials();
+    const response = await fetchFn(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+    }
+    return response.json();
+}
+
 function getCredentials() {
-    const TESTRAIL_URL = process.env.TESTRAIL_URL;
-    const API_USER = process.env.TESTRAIL_API_USER;
-    const API_KEY = process.env.TESTRAIL_API_KEY;
-    if (!TESTRAIL_URL || !API_USER || !API_KEY) {
+    const { TESTRAIL_URL, TESTRAIL_API_USER, TESTRAIL_API_KEY } = config;
+    if (!TESTRAIL_URL || !TESTRAIL_API_USER || !TESTRAIL_API_KEY) {
         throw new Error('TestRail credentials/config missing');
     }
-    const credentials = Buffer.from(`${API_USER}:${API_KEY}`).toString('base64');
+    const credentials = Buffer.from(`${TESTRAIL_API_USER}:${TESTRAIL_API_KEY}`).toString('base64');
     return { TESTRAIL_URL, credentials };
 }
 
 async function getCase(caseId) {
-    const { TESTRAIL_URL, credentials } = getCredentials();
+    const { TESTRAIL_URL } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/get_case/${caseId}`;
-    const response = await fetchFn(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/json',
-        }
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-    }
-    return await response.json();
+    return apiGet(url);
 }
 
 async function getReports(projectId) {
-    const { TESTRAIL_URL, credentials } = getCredentials();
+    const { TESTRAIL_URL } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/get_reports/${projectId}`;
-    const response = await fetchFn(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/json',
-        }
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-    }
-    return await response.json();
+    return apiGet(url);
 }
 
 async function runReport(reportId) {
-    console.log(`Running report with ID: ${reportId}`);
-    const { TESTRAIL_URL, credentials } = getCredentials();
+    const { TESTRAIL_URL } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/run_report/${reportId}`;
-    console.log(`TestRail URL: ${url}`);
-    
-    const response = await fetchFn(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/json',
-        }
-    });
-    
-    console.log(`Response status: ${response.status}`);
-    
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`TestRail API error: ${errorText}`);
-        throw new Error(errorText);
-    }
-    
-    const result = await response.json();
-    console.log('Report result:', result);
-    return result;
+    return apiGet(url);
 }
 
 async function getSuites(projectId) {
-    const { TESTRAIL_URL, credentials } = getCredentials();
+    const { TESTRAIL_URL } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/get_suites/${projectId}`;
-    const response = await fetchFn(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/json',
-        }
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-    }
-    return await response.json();
+    return apiGet(url);
 }
 
 async function getCases(projectId, suiteId) {
-    const { TESTRAIL_URL, credentials } = getCredentials();
+    const { TESTRAIL_URL } = getCredentials();
     const url = `${TESTRAIL_URL}/index.php?/api/v2/get_cases/${projectId}&suite_id=${suiteId}`;
-    const response = await fetchFn(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/json',
-        }
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-    }
-    return await response.json();
+    return apiGet(url);
 }
 
 module.exports = {
