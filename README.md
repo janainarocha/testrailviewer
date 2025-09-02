@@ -1,14 +1,15 @@
 # TestRail Viewer
 
-A lightweight web application for viewing TestRail test cases and reports with integrated PDF viewing capabilities.
+A professional, modular web application for viewing TestRail test cases, running reports, and searching user stories with a modern three-tab interface.
 
 ## Features
 
-- **Test Case Viewing**: Display detailed TestRail test cases with formatted content
-- **Report Generation**: Access and run TestRail reports 
-- **PDF Integration**: View PDF reports directly in the browser using multiple fallback methods
+- **Test Case Tab**: Display detailed TestRail test cases with formatted content, custom fields, and preconditions
+- **Reports Tab**: Access and run fixed TestRail reports with centralized configuration
+- **Search US Tab**: Search user stories across project suites with real-time filtering
+- **Modular Architecture**: ES6 modules, DRY principles, and clean separation of concerns
 - **Responsive Design**: Bootstrap-based UI that works on desktop and mobile
-- **Docker Ready**: Containerized for easy deployment on EC2 or any Docker environment
+- **Docker Ready**: Containerized for easy deployment with config validation
 
 ## Project Structure
 
@@ -42,11 +43,18 @@ testrailviewer/
 ```
 
 - **Backend**: Modular Express.js with config validation, controllers, services, and middlewares
-- **Frontend**: ES6 modules, no duplicidade de dados fixos, integração total via API
-- **Config**: Validação automática de variáveis essenciais no startup
-- **Docker Ready**: Containerização para produção e desenvolvimento
-- **Segurança**: CORS, variáveis de ambiente, usuário não-root
-- **Documentação**: README profissional e atualizado
+- **Frontend**: ES6 modules, centralized state management, no data duplication
+- **Config**: Automatic validation of essential environment variables at startup
+- **Architecture**: Clean separation between backend API and frontend modules
+- **Security**: CORS protection, environment variables, non-root Docker user
+- **Maintainability**: DRY principles, modular design, and professional code structure
+
+## Application Structure
+
+The application features three main tabs:
+1. **Test Case Tab**: Load and display individual test cases by ID
+2. **Reports Tab**: Execute predefined reports for Ivision and Fastlane projects
+3. **Search US Tab**: Search user stories across project suites with advanced filtering
 
 ## Quick Start
 
@@ -64,7 +72,6 @@ Edit `.env` with your TestRail settings:
 TESTRAIL_URL=https://your-company.testrail.com
 TESTRAIL_API_USER=your-email@company.com
 TESTRAIL_API_KEY=your-api-key
-NODE_ENV=production
 ```
 
 ### 2. Docker Deployment (Recommended)
@@ -100,22 +107,37 @@ Visit `http://localhost:3000` to access the application.
 - `GET /api/pdf-proxy` — Proxy PDF files with authentication
 - `GET /health` — Healthcheck endpoint for container monitoring
 
-**All endpoints validate required config variables at startup.**
+**All endpoints include input validation and error handling. Config validation ensures startup fails fast if required environment variables are missing.**
+
+## Development Features
+
+- **Modular Frontend**: ES6 modules for api.js, state.js, ui.js, utils.js, and main.js
+- **Centralized State**: No duplication of fixed data between frontend and backend
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **Responsive UI**: Three-tab interface that works on all devices
+- **Code Quality**: DRY principles, proper separation of concerns, and maintainable structure
 
 ## Technology Stack
 
 ### Backend
-- Node.js
-- Express.js
-- Modular structure (routes/services)
-- Environment variables via dotenv
-- CORS enabled
-- Non-root Docker user
+- **Node.js & Express.js**: RESTful API with modular architecture
+- **Config Validation**: Automatic validation of required environment variables
+- **Service Layer**: Dedicated TestRail API integration with error handling
+- **Middleware**: Request validation and centralized error handling
+- **CORS**: Cross-origin resource sharing enabled
 
 ### Frontend
-- Vanilla JavaScript
-- Bootstrap 5 (via CDN)
-- Font Awesome (via CDN)
+- **ES6 Modules**: Clean, modular JavaScript architecture
+- **State Management**: Centralized configuration and project management
+- **API Integration**: Complete separation from backend, no data duplication
+- **UI Components**: Responsive Bootstrap 5 interface with Font Awesome icons
+- **Three-Tab Interface**: Test cases, reports, and user story search
+
+### Architecture Principles
+- **DRY (Don't Repeat Yourself)**: Eliminated code duplication across modules
+- **Separation of Concerns**: Clear boundaries between API, UI, state, and utilities
+- **Centralized Configuration**: Fixed data (reports, projects) managed in backend only
+- **Modular Design**: Independent modules for maintainability and testing
 
 ### Containerization & DevOps
 - Docker

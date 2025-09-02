@@ -23,7 +23,12 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy application files
 COPY --chown=testrailviewer:nodejs server.js ./
+COPY --chown=testrailviewer:nodejs config.js ./
 COPY --chown=testrailviewer:nodejs .env.example ./
+COPY --chown=testrailviewer:nodejs routes/ ./routes/
+COPY --chown=testrailviewer:nodejs controllers/ ./controllers/
+COPY --chown=testrailviewer:nodejs middlewares/ ./middlewares/
+COPY --chown=testrailviewer:nodejs services/ ./services/
 COPY --chown=testrailviewer:nodejs public/ ./public/
 
 # Expose port
