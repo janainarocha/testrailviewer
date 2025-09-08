@@ -1,3 +1,18 @@
+# Automatic synchronization of TestRail test cases
+
+To schedule a weekly synchronization of TestRail test cases to the SQLite database, use cron on Linux/Unix:
+
+```
+0 3 * * 1 cd /path/to/your/testrailviewer && npm run sync:testrail
+```
+
+This example runs every Monday at 3am. Adjust the schedule as needed.
+
+You can also run it manually:
+
+```
+npm run sync:testrail
+```
 # TestRail Viewer
 
 A professional, modular web application for viewing TestRail test cases, running reports, and searching user stories with a modern three-tab interface.
@@ -15,31 +30,34 @@ A professional, modular web application for viewing TestRail test cases, running
 
 ```
 testrailviewer/
-├── server.js                # Express.js backend server (main entry point)
-├── package.json             # Node.js dependencies and scripts
-├── Dockerfile               # Docker container configuration
-├── docker-compose.yml       # Docker Compose for development
-├── deploy.sh                # EC2 deployment script
-├── .env.example             # Environment variables template
-├── .dockerignore            # Docker ignore rules
-├── config.js                # Centralized config with validation
-├── routes/                  # API route definitions (modular)
-│   └── api.js               # API endpoints (cases, reports)
-├── controllers/             # Route controllers (business logic)
-│   └── reportController.js  # Report endpoints logic
-├── middlewares/             # Express middlewares (validation, error handling)
-│   └── validate.js          # Request validation helpers
-├── services/                # Service layer (TestRail integration)
-│   └── testrailService.js   # TestRail API logic
-└── public/                  # Static frontend files
-    ├── index.html           # Main HTML page
-    ├── style.css            # CSS styling
-    └── modules/             # ES6 modules (frontend logic)
-        ├── api.js           # API calls to backend
-        ├── state.js         # State/config management (no fixed data duplication)
-        ├── ui.js            # UI rendering helpers
-        ├── utils.js         # Utility functions
-        └── main.js          # Main entry point (orchestrates tabs)
+├── src/                     # Source code
+│   ├── server.js           # Express.js backend server (main entry point)
+│   ├── config.js           # Centralized config with validation
+│   ├── routes/             # API route definitions (modular)
+│   │   └── api.js          # API endpoints (cases, reports)
+│   ├── controllers/        # Route controllers (business logic)
+│   │   └── reportController.js # Report endpoints logic
+│   ├── middlewares/        # Express middlewares (validation, error handling)
+│   │   └── validate.js     # Request validation helpers
+│   ├── services/           # Service layer (TestRail integration)
+│   │   └── testrailService.js # TestRail API logic
+│   ├── database/           # Database related files
+│   │   └── fetch_testrail_cases.js # SQLite sync script
+│   └── utils/              # Shared utilities
+├── public/                 # Static frontend files
+│   ├── index.html          # Main HTML page
+│   ├── style.css           # CSS styling
+│   └── modules/            # ES6 modules (frontend logic)
+│       ├── api.js          # API calls to backend
+│       ├── state.js        # State/config management
+│       ├── ui.js           # UI rendering helpers
+│       ├── utils.js        # Utility functions
+│       └── main.js         # Main entry point (orchestrates tabs)
+├── package.json            # Node.js dependencies and scripts
+├── Dockerfile              # Docker container configuration
+├── docker-compose.yml      # Docker Compose for development
+├── .env.example            # Environment variables template
+└── README.md               # This file
 ```
 
 - **Backend**: Modular Express.js with config validation, controllers, services, and middlewares

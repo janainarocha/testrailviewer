@@ -8,6 +8,7 @@ exports.getCase = async (req, res, next) => {
         const data = await testrail.getCase(caseId);
         res.json(data);
     } catch (error) {
+        console.error(`[ERROR] GET /api/case/${caseId} -`, error.message, error.stack);
         next(error);
     }
 };
@@ -18,6 +19,7 @@ exports.getReports = async (req, res, next) => {
         const data = await testrail.getReports(projectId);
         res.json(data);
     } catch (error) {
+        console.error(`[ERROR] GET /api/reports/${projectId} -`, error.message, error.stack);
         next(error);
     }
 };
@@ -28,6 +30,7 @@ exports.runReport = async (req, res, next) => {
         const data = await testrail.runReport(reportId);
         res.json(data);
     } catch (error) {
+        console.error(`[ERROR] GET /api/report/run/${reportId} -`, error.message, error.stack);
         next(error);
     }
 };
@@ -38,6 +41,7 @@ exports.getSuites = async (req, res, next) => {
         const data = await testrail.getSuites(projectId);
         res.json(data);
     } catch (error) {
+        console.error(`[ERROR] GET /api/suites/${projectId} -`, error.message, error.stack);
         next(error);
     }
 };

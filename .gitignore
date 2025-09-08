@@ -1,5 +1,12 @@
 # Ignore local MSAL config (never commit credentials)
 public/modules/msalConfig.local.js
+
+# Database files
+data/
+*.db
+*.sqlite
+*.sqlite3
+
 # Logs
 logs
 *.log
