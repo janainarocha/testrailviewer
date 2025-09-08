@@ -1,5 +1,8 @@
 
 const path = require('path');
+// MSAL (Azure AD) configuration - ready for future use
+// eslint-disable-next-line no-unused-vars
+// const { msalConfig, msalInstance } = require('./msalConfig');
 const express = require('express');
 const cors = require('cors');
 const config = require('./config');
@@ -18,7 +21,7 @@ app.get('/health', (req, res) => {
     res.json({ status: 'OK' });
 });
 
-// Static files and root
+// Serve static files and root
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));

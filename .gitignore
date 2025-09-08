@@ -1,3 +1,5 @@
+# Ignore local MSAL config (never commit credentials)
+public/modules/msalConfig.local.js
 # Logs
 logs
 *.log
