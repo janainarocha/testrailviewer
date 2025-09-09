@@ -1,0 +1,55 @@
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h5>Search User Stories</h5>
+                                        <p class="text-muted">Select a project and search for User Stories:</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Project Selection -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Select Project:</label>
+                                        <div class="d-flex gap-2">
+                                            <button id="ivision-btn" class="btn btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i>
+                                                Ivision
+                                            </button>
+                                            <button id="fastlane-btn" class="btn btn-outline-success">
+                                                <i class="fas fa-road me-1"></i>
+                                                Fastlane
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Search Input -->
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label for="search-input" class="form-label">User Story Reference:</label>
+                                        <input type="text" class="form-control" id="search-input" 
+                                               placeholder="Enter US reference (e.g., US12345)" disabled>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button id="search-btn" class="btn btn-primary" disabled>
+                                            <i class="fas fa-search me-2"></i>
+                                            Search
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Search Loading -->
+                                <div id="search-loading" class="text-center d-none">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2" id="search-status">Searching...</p>
+                                </div>
+
+                                <!-- Search Error -->
+                                <div id="search-error" class="alert alert-danger d-none" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="search-error-message"></span>
+                                </div>
+
+                                <!-- Search Results -->
+                                <div id="search-results"></div>

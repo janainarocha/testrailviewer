@@ -1,0 +1,44 @@
+   <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h5>Available Reports</h5>
+                                        <p class="text-muted">Click on any report below to generate it:</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Reports Loading -->
+                                <div id="reports-loading" class="text-center d-none">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading reports...</p>
+                                </div>
+
+                                <!-- Reports Error -->
+                                <div id="reports-error" class="alert alert-danger d-none" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="reports-error-message"></span>
+                                </div>
+
+                                <!-- Reports List -->
+                                <div id="reports-list">
+                                    <div id="reports-content">
+                                        <!-- Fixed reports will be loaded automatically here by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Report Results -->
+                                <div id="report-results" class="d-none">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 id="report-title" class="mb-0">Report Generated</h5>
+                                            <button class="btn btn-sm btn-secondary" id="hide-report-results-btn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="report-content">
+                                                <!-- Report buttons will be inserted here by JavaScript -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
