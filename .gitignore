@@ -2,7 +2,6 @@
 public/modules/msalConfig.local.js
 
 # Database files
-data/
 *.db
 *.sqlite
 *.sqlite3

@@ -1,11 +1,9 @@
 
-const path = require('path');
-// MSAL (Azure AD) configuration - ready for future use
-// eslint-disable-next-line no-unused-vars
-// const { msalConfig, msalInstance } = require('./msalConfig');
+const path = require('path');;
 const express = require('express');
 const cors = require('cors');
-const config = require('./config');
+const config = require('./src/config');
+const apiRoutes = require('./src/routes/api');
 
 const app = express();
 app.use(cors());
@@ -13,7 +11,6 @@ app.use(express.json());
 const PORT = config.PORT;
 
 // Modular API routes
-const apiRoutes = require('./routes/api');
 app.use('/api', apiRoutes);
 
 // Health check endpoint
@@ -28,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // Error handler
-const errorHandler = require('./middlewares/errorHandler');
+const errorHandler = require('./src/middlewares/errorHandler');
 app.use(errorHandler);
 // 404 handler
 app.use('*', (req, res) => {
