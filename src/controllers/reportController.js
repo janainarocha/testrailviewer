@@ -68,7 +68,22 @@ exports.getFixedReports = async (req, res, next) => {
 exports.getBrowserProjects = async (req, res, next) => {
     try {
         const data = await testrail.getBrowserProjects();
-        res.json(data);
+        
+        // Validate data before sending
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid projects data from database');
+        }
+        
+        // Filter sensitive information and add safety checks
+        const sanitizedData = data.map(project => ({
+            id: parseInt(project.id) || 0,
+            name: (project.name || '').substring(0, 255), // Limit length
+            is_completed: project.is_completed ? 1 : 0,
+            suite_mode: parseInt(project.suite_mode) || 1,
+            announcement: (project.announcement || '').substring(0, 1000)
+        })).filter(project => project.id > 0); // Only valid IDs
+        
+        res.json(sanitizedData);
     } catch (error) {
         console.error('[ERROR] GET /api/browser/projects -', error.message, error.stack);
         next(error);
@@ -76,10 +91,29 @@ exports.getBrowserProjects = async (req, res, next) => {
 };
 
 exports.getBrowserSuites = async (req, res, next) => {
-    const projectId = req.params.projectId;
+    const projectId = parseInt(req.params.projectId);
+    
+    // Validate project ID
+    if (!projectId || projectId <= 0) {
+        return res.status(400).json({ error: 'Invalid project ID' });
+    }
+    
     try {
         const data = await testrail.getBrowserSuites(projectId);
-        res.json(data);
+        
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid suites data from database');
+        }
+        
+        const sanitizedData = data.map(suite => ({
+            id: parseInt(suite.id) || 0,
+            project_id: parseInt(suite.project_id) || 0,
+            name: (suite.name || '').substring(0, 255),
+            description: (suite.description || '').substring(0, 1000),
+            is_master: suite.is_master ? 1 : 0
+        })).filter(suite => suite.id > 0);
+        
+        res.json(sanitizedData);
     } catch (error) {
         console.error(`[ERROR] GET /api/browser/suites/${projectId} -`, error.message, error.stack);
         next(error);

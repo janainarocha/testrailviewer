@@ -69,15 +69,29 @@ async function getCases(projectId, suiteId) {
     return apiGet(url);
 }
 
-// Helper function to run SQLite queries
+// Helper function to run SQLite queries with better error handling
 function runSQLiteQuery(query, params = []) {
     return new Promise((resolve, reject) => {
+        // Validate inputs
+        if (!query || typeof query !== 'string') {
+            reject(new Error('Invalid query provided'));
+            return;
+        }
+
+        if (!Array.isArray(params)) {
+            reject(new Error('Parameters must be an array'));
+            return;
+        }
+
         const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
             if (err) {
                 reject(new Error(`Database connection failed: ${err.message}`));
                 return;
             }
         });
+
+        // Set timeout for queries
+        db.configure('busyTimeout', 5000);
 
         db.all(query, params, (err, rows) => {
             if (err) {
@@ -91,6 +105,12 @@ function runSQLiteQuery(query, params = []) {
                     console.warn('Warning: Failed to close database connection:', closeErr.message);
                 }
             });
+            
+            // Validate returned data
+            if (!Array.isArray(rows)) {
+                reject(new Error('Invalid data returned from database'));
+                return;
+            }
             
             resolve(rows);
         });
