@@ -83,12 +83,17 @@ function performSearch(searchTerm, sectionFilter) {
                 sectionHasVisibleCases = true;
                 visibleCasesCount++;
                 
-                // Highlight search terms
-                if (searchTerm && caseTitle) {
+                // Highlight search terms or remove highlight if no search
+                if (caseTitle) {
                     highlightSearchTerm(caseTitle, searchTerm);
                 }
             } else {
                 caseItem.style.display = 'none';
+                
+                // Still need to remove highlight from hidden items
+                if (caseTitle) {
+                    highlightSearchTerm(caseTitle, '');
+                }
             }
         });
 
@@ -202,8 +207,22 @@ window.clearAllFilters = function() {
     currentSearch = '';
     currentFilter = '';
     
+    // Clear highlights and reset visibility
+    clearHighlights();
     performSearch('', '');
 };
+
+function clearHighlights() {
+    const sectionsTree = document.getElementById('browser-sections-tree');
+    if (sectionsTree) {
+        const searchableElements = sectionsTree.querySelectorAll('[data-searchable][data-original-text]');
+        searchableElements.forEach(element => {
+            if (element.dataset.originalText) {
+                element.innerHTML = sanitizeHTML(element.dataset.originalText);
+            }
+        });
+    }
+}
 
 export function resetSearchAndFilter() {
     const searchInput = document.getElementById('browser-search');
@@ -219,13 +238,21 @@ export function resetSearchAndFilter() {
     currentSearch = '';
     currentFilter = '';
 
-    // Remove highlights from any visible cases
-    const highlightedElements = document.querySelectorAll('[data-original-text]');
-    highlightedElements.forEach(element => {
-        if (element.dataset.originalText) {
-            element.innerHTML = sanitizeHTML(element.dataset.originalText);
-        }
-    });
+    // Clear all highlights
+    clearHighlights();
+    
+    // Reset all sections and cases to visible
+    const sectionsTree = document.getElementById('browser-sections-tree');
+    if (sectionsTree) {
+        const sections = sectionsTree.querySelectorAll('.browser-section');
+        sections.forEach(section => {
+            section.style.display = 'block';
+            const caseItems = section.querySelectorAll('.browser-case-item');
+            caseItems.forEach(caseItem => {
+                caseItem.style.display = 'block';
+            });
+        });
+    }
 }
 
 // Advanced search functionality
