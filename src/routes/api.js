@@ -22,4 +22,10 @@ router.get('/cases/:projectId/:suiteId', validateProjectAndSuite, reportControll
 // GET /api/fixed-reports - Returns fixed reports for Ivision and Fastlane
 router.get('/fixed-reports', reportController.getFixedReports);
 
+// Browser routes for local database
+router.get('/browser/projects', reportController.getBrowserProjects);
+router.get('/browser/suites/:projectId', validateIdParam('projectId'), reportController.getBrowserSuites);
+router.get('/browser/sections/:suiteId', validateIdParam('suiteId'), reportController.getBrowserSections);
+router.get('/browser/cases/:suiteId', validateIdParam('suiteId'), reportController.getBrowserCases);
+
 module.exports = router;

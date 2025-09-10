@@ -63,3 +63,47 @@ exports.getFixedReports = async (req, res, next) => {
         next(error);
     }
 };
+
+// Browser controller functions for local database
+exports.getBrowserProjects = async (req, res, next) => {
+    try {
+        const data = await testrail.getBrowserProjects();
+        res.json(data);
+    } catch (error) {
+        console.error('[ERROR] GET /api/browser/projects -', error.message, error.stack);
+        next(error);
+    }
+};
+
+exports.getBrowserSuites = async (req, res, next) => {
+    const projectId = req.params.projectId;
+    try {
+        const data = await testrail.getBrowserSuites(projectId);
+        res.json(data);
+    } catch (error) {
+        console.error(`[ERROR] GET /api/browser/suites/${projectId} -`, error.message, error.stack);
+        next(error);
+    }
+};
+
+exports.getBrowserSections = async (req, res, next) => {
+    const suiteId = req.params.suiteId;
+    try {
+        const data = await testrail.getBrowserSections(suiteId);
+        res.json(data);
+    } catch (error) {
+        console.error(`[ERROR] GET /api/browser/sections/${suiteId} -`, error.message, error.stack);
+        next(error);
+    }
+};
+
+exports.getBrowserCases = async (req, res, next) => {
+    const suiteId = req.params.suiteId;
+    try {
+        const data = await testrail.getBrowserCases(suiteId);
+        res.json(data);
+    } catch (error) {
+        console.error(`[ERROR] GET /api/browser/cases/${suiteId} -`, error.message, error.stack);
+        next(error);
+    }
+};

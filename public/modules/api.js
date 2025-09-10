@@ -42,3 +42,24 @@ export async function getCases(projectId, suiteId) {
 	const response = await fetch(`${getBaseUrl()}/api/cases/${projectId}/${suiteId}`);
 	return handleResponse(response);
 }
+
+// Browser API functions
+export async function getBrowserProjects() {
+	const response = await fetch(`${getBaseUrl()}/api/browser/projects`);
+	return handleResponse(response);
+}
+
+export async function getBrowserSuites(projectId) {
+	const response = await fetch(`${getBaseUrl()}/api/browser/suites/${projectId}`);
+	return handleResponse(response);
+}
+
+export async function getBrowserSections(suiteId) {
+	const response = await fetch(`${getBaseUrl()}/api/browser/sections/${suiteId}`);
+	return handleResponse(response);
+}
+
+export async function getBrowserCases(suiteId) {
+	const response = await fetch(`${getBaseUrl()}/api/browser/cases/${suiteId}`);
+	return handleResponse(response);
+}

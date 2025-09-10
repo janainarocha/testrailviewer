@@ -5,6 +5,7 @@ import { getUrlParameter } from './modules/utils.js';
 import * as testCaseModule from './features/case/testCase.js';
 import * as reportsModule from './features/reports/reports.js';
 import * as searchModule from './features/search/search.js';
+import * as browserModule from './features/browser/browser.js';
 
 // Tab content loading
 async function loadTabContent(tabId, htmlPath) {
@@ -23,6 +24,7 @@ async function initializeTabs() {
     await loadTabContent('case-pane', 'features/case/case.html');
     await loadTabContent('reports-pane', 'features/reports/reports.html');
     await loadTabContent('search-pane', 'features/search/search.html');
+    await loadTabContent('browser-pane', 'features/browser/browser.html');
 }
 
 // --- Initialization ---
@@ -43,6 +45,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Reports tab: load reports on tab show
     const reportsTab = document.getElementById('reports-tab');
     if (reportsTab) reportsTab.addEventListener('click', reportsModule.handleLoadReports);
+    
+    // Browser tab: initialize browser on tab show
+    const browserTab = document.getElementById('browser-tab');
+    if (browserTab) browserTab.addEventListener('click', browserModule.handleBrowserTabShow);
     
     // Hide report results button
     const hideReportBtn = document.getElementById('hide-report-results-btn');
