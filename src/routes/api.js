@@ -28,4 +28,17 @@ router.get('/browser/suites/:projectId', validateIdParam('projectId'), reportCon
 router.get('/browser/sections/:suiteId', validateIdParam('suiteId'), reportController.getBrowserSections);
 router.get('/browser/cases/:suiteId', validateIdParam('suiteId'), reportController.getBrowserCases);
 
+// Dashboard routes
+router.get('/dashboard/automation-coverage/:projectId', validateIdParam('projectId'), reportController.getAutomationCoverage);
+router.get('/dashboard/monthly-trend/:projectId', validateIdParam('projectId'), reportController.getMonthlyTrend);
+router.get('/dashboard/github-stats/:owner/:repo', reportController.getGitHubStats);
+router.get('/dashboard/epic-progress/:epicKey', reportController.getEpicProgress);
+
+// Monthly automation report routes
+router.get('/dashboard/automation-history', reportController.getMonthlyAutomationHistory);
+router.get('/dashboard/epic-history', reportController.getMonthlyEpicHistory);
+router.get('/dashboard/execution-logs', reportController.getExecutionLogs);
+router.get('/dashboard/current-automation-stats', reportController.getCurrentAutomationStats);
+router.post('/dashboard/trigger-monthly-report', reportController.triggerMonthlyReport);
+
 module.exports = router;

@@ -6,7 +6,9 @@
     <title>TestRail Case Viewer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="style.css" rel="stylesheet">
+    <link href="features/dashboard/dashboard.css" rel="stylesheet">
 </head>
 <body>
         <div id="login-blocker" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;">
@@ -52,12 +54,19 @@
                                     Test Cases Browser
                                 </button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard-pane" type="button" role="tab">
+                                    <i class="fas fa-chart-line me-1"></i>
+                                    Dashboard
+                                </button>
+                            </li>
                         </ul>
                         <div class="tab-content" id="mainTabContent">
                             <div class="tab-pane fade show active" id="case-pane" role="tabpanel"></div>
                             <div class="tab-pane fade" id="reports-pane" role="tabpanel"></div>
                             <div class="tab-pane fade" id="search-pane" role="tabpanel"></div>
                             <div class="tab-pane fade" id="browser-pane" role="tabpanel"></div>
+                            <div class="tab-pane fade" id="dashboard-pane" role="tabpanel"></div>
                         </div>
                         </div>
                     </div>

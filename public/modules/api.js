@@ -63,3 +63,26 @@ export async function getBrowserCases(suiteId) {
 	const response = await fetch(`${getBaseUrl()}/api/browser/cases/${suiteId}`);
 	return handleResponse(response);
 }
+
+// Dashboard API functions - Updated to use real dashboard database
+export async function getAutomationCoverage(projectId) {
+	// Use the new endpoint that gets current stats from dashboard database
+	const response = await fetch(`${getBaseUrl()}/api/dashboard/current-automation-stats`);
+	return handleResponse(response);
+}
+
+export async function getMonthlyTrend(projectId) {
+	// Use the new endpoint that gets historical data from dashboard database
+	const response = await fetch(`${getBaseUrl()}/api/dashboard/automation-history`);
+	return handleResponse(response);
+}
+
+export async function getGitHubStats(owner, repo) {
+	const response = await fetch(`${getBaseUrl()}/api/dashboard/github-stats/${owner}/${repo}`);
+	return handleResponse(response);
+}
+
+export async function getEpicProgress(epicKey) {
+	const response = await fetch(`${getBaseUrl()}/api/dashboard/epic-progress/${epicKey}`);
+	return handleResponse(response);
+}

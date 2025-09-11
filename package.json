@@ -11,7 +11,11 @@
     "docker:up": "docker-compose up --build",
     "docker:down": "docker-compose down",
     "test": "echo 'Visit http://localhost:3000/?case=381377 to test'",
-    "sync:testrail": "node src/scripts/fetch_testrail_cases.js"
+    "sync:testrail": "node src/scripts/fetch_testrail_cases.js",
+    "monthly:report": "node src/scripts/monthly_automation_report.js",
+    "monthly:report-mcp": "node src/scripts/monthly_automation_report_mcp.js",
+    "monthly:setup": "node src/scripts/schedule_setup.js",
+    "monthly:test": "node src/scripts/monthly_automation_report.js"
   },
   "keywords": [
     "testrail",
@@ -24,6 +28,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.22.0",
     "@azure/msal-react": "^3.0.19",
+    "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.18.3",

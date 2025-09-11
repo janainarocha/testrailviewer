@@ -1,0 +1,57 @@
+{
+  "name": "monthly-automation-report",
+  "version": "1.0.0",
+  "description": "Agendador de relatório mensal de automação para iVision5",
+  "main": "monthly_automation_report.js",
+  "scripts": {
+    "monthly-report": "node monthly_automation_report.js",
+    "test-report": "node monthly_automation_report.js",
+    "schedule-setup": "node schedule_setup.js"
+  },
+  "schedule": {
+    "monthly": {
+      "cron": "0 9 1 * *",
+      "description": "Todo dia 1 do mês às 9:00 AM",
+      "timezone": "America/Sao_Paulo"
+    },
+    "test": {
+      "cron": "0 */6 * * *",
+      "description": "A cada 6 horas (para testes)",
+      "timezone": "America/Sao_Paulo"
+    }
+  },
+  "config": {
+    "testrail": {
+      "project_id": 19,
+      "project_name": "iVision5",
+      "report_id": 3,
+      "report_name": "Ivision Automated Report"
+    },
+    "jira": {
+      "epic_key": "OPR-3401",
+      "cloud_id": "2e885c33-8531-45fc-9887-52fbdfad2682"
+    },
+    "notifications": {
+      "email": [
+        "m.blanchard@fugro.com",
+        "t.yurchenko@fugro.com", 
+        "janaina.rocha@fugro.com"
+      ],
+      "slack_webhook": null,
+      "teams_webhook": null
+    }
+  },
+  "automation_types": {
+    "0": "Not Required",
+    "1": "To do (Manual)",
+    "2": "Automated"
+  },
+  "status_mapping": {
+    "jira": {
+      "done": ["Done"],
+      "todo": ["To Do", "In Progress", "Testing"],
+      "po_review": ["PO Review"],
+      "declined": ["Declined", "Won't Do"]
+    }
+  }
+}
